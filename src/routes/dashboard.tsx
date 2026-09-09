@@ -34,6 +34,32 @@ function Dashboard() {
 
   return (
     <AppShell title="Tableau de bord" subtitle="Vue d'ensemble de l'activité commerciale">
+      <section className="animate-rise relative mb-6 overflow-hidden rounded-2xl border border-border">
+        <img
+          src={bannerImg}
+          alt="Programme immobilier à Rabat"
+          width={1024}
+          height={640}
+          className="h-[190px] w-full object-cover transition-transform duration-[1200ms] hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/70 to-transparent" />
+        <div className="absolute inset-y-0 left-0 flex max-w-xl flex-col justify-center gap-2 px-6 lg:px-10">
+          <p className="text-[11px] uppercase tracking-[0.24em] text-primary">Lead Advisory Consulting</p>
+          <h2 className="display-title text-3xl uppercase text-[oklch(0.97_0.01_88)]">
+            Votre partenaire stratégique en immobilier
+          </h2>
+          <p className="text-sm text-[oklch(0.85_0.01_88)]">
+            Harhoura, Témara — 16 ans d'expérience au service de votre patrimoine.
+          </p>
+          <Link
+            to="/leads"
+            className="press mt-2 inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary-foreground hover:shadow-lift"
+          >
+            Ouvrir le pipeline <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </section>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Leads actifs" value={active} icon={Users} hint="Pipeline en cours" accent="azure" />
         <KpiCard label="Taux de conversion" value={19.4} suffix=" %" decimals={1} icon={TrendingUp} hint="+2,3 pts vs mois dernier" delay={80} accent="emerald" />
@@ -59,14 +85,17 @@ function Dashboard() {
                 <Link
                   key={s}
                   to="/leads"
-                  className="rounded-lg border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-soft"
+                  className="press rounded-lg border border-border bg-background p-4 hover:-translate-y-1 hover:border-primary/60 hover:shadow-lift"
                 >
-                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{s}</p>
+                  <p className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-muted-foreground">
+                    <span className="h-2 w-2 rounded-full" style={{ background: STATUS_COLOR[s] }} />
+                    {s}
+                  </p>
                   <p className="display-title mt-2 text-3xl">{count}</p>
-                  <div className="mt-3 h-1 w-full rounded-full bg-muted">
+                  <div className="mt-3 h-1.5 w-full rounded-full bg-muted">
                     <div
-                      className="h-1 rounded-full bg-primary transition-all duration-700"
-                      style={{ width: `${Math.min(100, count * 25)}%` }}
+                      className="h-1.5 rounded-full transition-all duration-700"
+                      style={{ width: `${Math.min(100, count * 18)}%`, background: STATUS_COLOR[s] }}
                     />
                   </div>
                 </Link>
