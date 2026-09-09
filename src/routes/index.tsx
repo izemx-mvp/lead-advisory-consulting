@@ -122,7 +122,6 @@ function LoginPage() {
           <span className="rounded-full border border-primary/60 bg-[oklch(0.16_0.004_60)]/60 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-primary">
             CRM immobilier
           </span>
-          <h2 className="display-title mt-4 text-3xl uppercase">Harhoura · Témara · Rabat</h2>
         </div>
       </div>
 
