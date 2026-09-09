@@ -68,6 +68,50 @@ export function CrmProvider({ children }: { children: ReactNode }) {
           return [newClient, ...prev];
         });
       },
+      addQuote: (clientId, quote) =>
+        setClients((prev) =>
+          prev.map((c) =>
+            c.id !== clientId
+              ? c
+              : {
+                  ...c,
+                  quotes: [...c.quotes, quote],
+                  notifications: [
+                    { id: `N-${Date.now()}`, label: `Devis ${quote.id} généré et envoyé au client`, tone: "info" as const, date: "Aujourd'hui" },
+                    ...c.notifications,
+                  ],
+                  timeline: [...c.timeline, { label: `Devis ${quote.id} envoyé`, date: "Aujourd'hui" }],
+                },
+          ),
+        ),
+      addInvoice: (clientId, invoice) =>
+        setClients((prev) =>
+          prev.map((c) =>
+            c.id !== clientId
+              ? c
+              : {
+                  ...c,
+                  invoices: [...c.invoices, invoice],
+                  timeline: [...c.timeline, { label: `Facture ${invoice.id} émise`, date: "Aujourd'hui" }],
+                },
+          ),
+        ),
+      payInvoice: (clientId, invoiceId) =>
+        setClients((prev) =>
+          prev.map((c) =>
+            c.id !== clientId
+              ? c
+              : {
+                  ...c,
+                  invoices: c.invoices.map((f) => (f.id === invoiceId ? { ...f, status: "Payée" as const } : f)),
+                  notifications: [
+                    { id: `N-${Date.now()}`, label: `Paiement reçu — ${invoiceId}`, tone: "success" as const, date: "Aujourd'hui" },
+                    ...c.notifications,
+                  ],
+                  timeline: [...c.timeline, { label: `Paiement encaissé — ${invoiceId}`, date: "Aujourd'hui" }],
+                },
+          ),
+        ),
       validateQuote: (clientId, quoteId) =>
         setClients((prev) =>
           prev.map((c) =>
