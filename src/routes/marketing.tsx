@@ -6,6 +6,11 @@ import { AppShell } from "@/components/app/AppShell";
 import { SectionTitle, StatusBadge } from "@/components/app/ui-bits";
 import { useCrm } from "@/lib/crm-store";
 import { FAQ, GENERATED_POSTS } from "@/lib/mock-data";
+import villaImg from "@/assets/prop-villa-souissi.jpg";
+import harhouraImg from "@/assets/prop-harhoura.jpg";
+import oceanImg from "@/assets/prop-rabat-ocean.jpg";
+
+const POST_IMAGES = [villaImg, harhouraImg, oceanImg];
 
 export const Route = createFileRoute("/marketing")({
   head: () => ({
@@ -51,7 +56,7 @@ function MarketingPage() {
               <button
                 key={t}
                 onClick={() => setTheme(t)}
-                className={`rounded-full border px-3 py-1.5 text-xs transition-all ${
+                className={`press rounded-full border px-3 py-1.5 text-xs ${
                   theme === t ? "border-primary bg-primary/15 font-semibold" : "border-border text-muted-foreground hover:border-primary/60"
                 }`}
               >
@@ -82,7 +87,7 @@ function MarketingPage() {
                   });
                   toast.success("Brouillon ajouté à la galerie");
                 }}
-                className="mt-3 rounded-lg border border-primary/50 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[oklch(0.45_0.07_63)] transition-colors hover:bg-primary/15"
+                className="mt-3 rounded-lg border border-primary/50 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/15"
               >
                 Enregistrer comme brouillon
               </button>
@@ -101,10 +106,19 @@ function MarketingPage() {
               return (
                 <article
                   key={p.id}
-                  className="animate-rise flex flex-col rounded-lg border border-border bg-background p-4 transition-all hover:-translate-y-0.5 hover:shadow-soft"
+                  className="animate-rise group flex flex-col overflow-hidden rounded-lg border border-border bg-background p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/60 hover:shadow-lift"
                   style={{ animationDelay: `${i * 70}ms` }}
                 >
-                  <div className="mb-3 h-20 rounded-md bg-gradient-to-br from-[oklch(0.86_0.045_75)] to-[oklch(0.62_0.08_63)]" />
+                  <div className="mb-3 overflow-hidden rounded-md">
+                    <img
+                      src={POST_IMAGES[i % POST_IMAGES.length]}
+                      alt={p.title}
+                      loading="lazy"
+                      width={1024}
+                      height={640}
+                      className="h-24 w-full object-cover transition-transform duration-500 hover:scale-110"
+                    />
+                  </div>
                   <div className="flex items-center gap-2">
                     <Icon className="h-3.5 w-3.5 text-primary" />
                     <p className="text-sm font-semibold">{p.title}</p>

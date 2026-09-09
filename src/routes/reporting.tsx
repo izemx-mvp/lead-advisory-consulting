@@ -4,6 +4,7 @@ import {
   AreaChart,
   Bar,
   BarChart,
+  Cell,
   CartesianGrid,
   Legend,
   ResponsiveContainer,
@@ -34,10 +35,10 @@ function ReportingPage() {
   return (
     <AppShell title="Reporting / KPI" subtitle="Pilotage de la performance commerciale">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Total leads" value={373} icon={Users} hint="Depuis janvier 2026" />
-        <KpiCard label="Taux de conversion" value={19.4} suffix=" %" decimals={1} icon={TrendingUp} hint="Moyenne annuelle" delay={80} />
-        <KpiCard label="Clients actifs" value={26} icon={Briefcase} hint="Dossiers en cours" delay={160} />
-        <KpiCard label="Chiffre d'affaires" value={1842000} suffix=" MAD" icon={Wallet} hint="Cumul 2026" delay={240} />
+        <KpiCard label="Total leads" value={444} icon={Users} hint="Depuis janvier 2026" accent="azure" />
+        <KpiCard label="Taux de conversion" value={19.4} suffix=" %" decimals={1} icon={TrendingUp} hint="Moyenne annuelle" delay={80} accent="emerald" />
+        <KpiCard label="Clients actifs" value={26} icon={Briefcase} hint="Dossiers en cours" delay={160} accent="violet" />
+        <KpiCard label="Chiffre d'affaires" value={1842000} suffix=" MAD" icon={Wallet} hint="Cumul 2026" delay={240} accent="gold" />
       </div>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-3">
@@ -52,8 +53,8 @@ function ReportingPage() {
                     <stop offset="100%" stopColor="var(--gold)" stopOpacity={0.02} />
                   </linearGradient>
                   <linearGradient id="gClients" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--ink)" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="var(--ink)" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="var(--azure)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--azure)" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -69,7 +70,7 @@ function ReportingPage() {
                 />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area type="monotone" dataKey="leads" name="Leads" stroke="var(--gold)" strokeWidth={2} fill="url(#gLeads)" />
-                <Area type="monotone" dataKey="clients" name="Clients" stroke="var(--ink)" strokeWidth={2} fill="url(#gClients)" />
+                <Area type="monotone" dataKey="clients" name="Clients" stroke="var(--azure)" strokeWidth={2} fill="url(#gClients)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -87,7 +88,11 @@ function ReportingPage() {
                   cursor={{ fill: "var(--accent)" }}
                   contentStyle={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 12, fontSize: 12 }}
                 />
-                <Bar dataKey="leads" name="Leads" fill="var(--gold)" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="leads" name="Leads" radius={[0, 6, 6, 0]}>
+                  {CHANNEL_PERF.map((_, i) => (
+                    <Cell key={i} fill={`var(--chart-${(i % 5) + 1})`} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -109,7 +114,7 @@ function ReportingPage() {
                 <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-muted">
                   <div
                     className={`h-full rounded-full transition-all duration-1000 ${
-                      c.conversion < 12 ? "bg-destructive/70" : "bg-primary"
+                      c.conversion < 12 ? "bg-[var(--terracotta)]" : c.conversion >= 25 ? "bg-[var(--emerald)]" : "bg-primary"
                     }`}
                     style={{ width: `${c.conversion * 3}%` }}
                   />
@@ -121,7 +126,7 @@ function ReportingPage() {
 
         <div className="animate-rise rounded-xl border border-[var(--warning)]/50 bg-[var(--warning)]/12 p-5">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-[oklch(0.5_0.11_70)]" />
+            <AlertTriangle className="h-4 w-4 text-[var(--warning)]" />
             <p className="display-title text-sm uppercase tracking-[0.14em]">Points d'effort</p>
           </div>
           <p className="mt-3 text-sm">
