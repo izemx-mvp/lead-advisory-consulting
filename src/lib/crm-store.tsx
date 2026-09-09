@@ -29,7 +29,11 @@ type Ctx = {
   upsertKnowledge: (item: KnowledgeItem) => void;
 };
 
-const CrmContext = createContext<Ctx | null>(null);
+// Cached on globalThis so hot-reload / code-splitting duplicate module
+// instances still share a single context object.
+const g = globalThis as { __lacCrmContext?: React.Context<Ctx | null> };
+const CrmContext: React.Context<Ctx | null> =
+  g.__lacCrmContext ?? (g.__lacCrmContext = createContext<Ctx | null>(null));
 
 export function CrmProvider({ children }: { children: ReactNode }) {
   const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
