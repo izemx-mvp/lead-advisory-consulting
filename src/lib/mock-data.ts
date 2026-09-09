@@ -404,15 +404,15 @@ export const MOCK_NOTIFICATIONS: AppNotification[] = [
 ];
 
 export const MONTHLY = [
-  { mois: "Jan", leads: 34, clients: 4, ca: 180 },
-  { mois: "Fév", leads: 39, clients: 5, ca: 210 },
-  { mois: "Mar", leads: 47, clients: 6, ca: 245 },
-  { mois: "Avr", leads: 42, clients: 6, ca: 232 },
-  { mois: "Mai", leads: 55, clients: 8, ca: 288 },
-  { mois: "Juin", leads: 61, clients: 9, ca: 305 },
-  { mois: "Juil", leads: 58, clients: 7, ca: 264 },
-  { mois: "Août", leads: 74, clients: 12, ca: 356 },
-  { mois: "Sept", leads: 83, clients: 14, ca: 402 },
+  { mois: "Jan", leads: 34, clients: 4, ca: 180, rdv: 11, perdus: 9, ventes: 3 },
+  { mois: "Fév", leads: 39, clients: 5, ca: 210, rdv: 13, perdus: 11, ventes: 4 },
+  { mois: "Mar", leads: 47, clients: 6, ca: 245, rdv: 16, perdus: 12, ventes: 5 },
+  { mois: "Avr", leads: 42, clients: 6, ca: 232, rdv: 15, perdus: 14, ventes: 4 },
+  { mois: "Mai", leads: 55, clients: 8, ca: 288, rdv: 21, perdus: 15, ventes: 6 },
+  { mois: "Juin", leads: 61, clients: 9, ca: 305, rdv: 24, perdus: 17, ventes: 7 },
+  { mois: "Juil", leads: 58, clients: 7, ca: 264, rdv: 22, perdus: 21, ventes: 7 },
+  { mois: "Août", leads: 74, clients: 12, ca: 356, rdv: 31, perdus: 19, ventes: 12 },
+  { mois: "Sept", leads: 83, clients: 14, ca: 402, rdv: 36, perdus: 16, ventes: 14 },
 ];
 
 export const CHANNEL_PERF = [
