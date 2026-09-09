@@ -495,7 +495,7 @@ function ReportingPage() {
             return (
               <div
                 key={ins.titre}
-                className="panel panel-hover animate-rise overflow-hidden p-5"
+                className="panel panel-hover animate-rise relative overflow-hidden p-5"
                 style={{ animationDelay: `${i * 70}ms` }}
               >
                 <span className="absolute inset-x-0 top-0 h-1" style={{ background: color }} />
