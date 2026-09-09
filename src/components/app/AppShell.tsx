@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { ArchitecturalBackdrop } from "@/components/app/ArchitecturalBackdrop";
 import { useTheme } from "@/lib/theme";
 import { useCrm } from "@/lib/crm-store";
 import { MOCK_NOTIFICATIONS } from "@/lib/mock-data";
@@ -53,8 +54,9 @@ export function AppShell({
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="flex">
+    <div className="relative min-h-screen bg-background">
+      <ArchitecturalBackdrop />
+      <div className="relative z-10 flex">
         <aside
           className={`sticky top-0 hidden h-screen shrink-0 flex-col border-r border-border bg-sidebar py-6 transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:flex ${
             collapsed ? "w-[84px] px-3" : "w-[264px] px-5"

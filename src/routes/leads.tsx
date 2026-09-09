@@ -781,34 +781,6 @@ function ListView({ leads, onOpen }: { leads: Lead[]; onOpen: (id: string) => vo
 
   return (
     <div className="panel overflow-x-auto">
-      <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
-        <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Trier la liste</span>
-        {LIST_COLUMNS.map((c) => (
-          <button
-            key={c.key}
-            onClick={() => toggle(c.key)}
-            className={`press inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] transition-colors ${
-              sortKey === c.key
-                ? "border-primary bg-primary/15 font-semibold"
-                : "border-border text-muted-foreground hover:border-primary/60"
-            }`}
-          >
-            {c.label}
-            {sortKey === c.key && (dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
-          </button>
-        ))}
-        {sortKey && (
-          <button
-            onClick={() => {
-              setSortKey(null);
-              setDir("asc");
-            }}
-            className="press rounded-full border border-border px-3 py-1 text-[11px] text-muted-foreground hover:border-primary/60"
-          >
-            Réinitialiser le tri
-          </button>
-        )}
-      </div>
       <table className="w-full min-w-[860px]">
         <thead className="border-b border-border bg-sidebar/60">
           <tr>
