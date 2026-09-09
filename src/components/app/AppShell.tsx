@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { ArchitecturalBackdrop } from "@/components/app/ArchitecturalBackdrop";
 import { useTheme } from "@/lib/theme";
 import { useCrm } from "@/lib/crm-store";
 import { MOCK_NOTIFICATIONS } from "@/lib/mock-data";
