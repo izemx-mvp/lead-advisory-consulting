@@ -1,8 +1,8 @@
 /**
- * Decorative, very discreet architectural backdrop rendered behind the app.
- * Combines faint building silhouettes (real-estate identity) with thin
- * geometric lines inspired by architectural plans. Kept extremely low opacity
- * so it never interferes with readability.
+ * Decorative, almost invisible skyline watermark rendered behind the app.
+ * Only faint building silhouettes (villas, buildings, towers) at very low
+ * opacity (3-6%), tinted in the same beige/anthracite family as the page
+ * background so they never disturb readability.
  */
 export function ArchitecturalBackdrop() {
   return (
@@ -14,43 +14,14 @@ export function ArchitecturalBackdrop() {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* --- Blueprint grid: fine architectural lines --- */}
         <defs>
-          <pattern id="lac-grid" width="120" height="120" patternUnits="userSpaceOnUse">
-            <path
-              d="M120 0H0V120"
-              stroke="var(--bronze)"
-              strokeOpacity="0.06"
-              strokeWidth="1"
-            />
-          </pattern>
-          <pattern id="lac-grid-fine" width="24" height="24" patternUnits="userSpaceOnUse">
-            <path
-              d="M24 0H0V24"
-              stroke="var(--muted-foreground)"
-              strokeOpacity="0.035"
-              strokeWidth="0.5"
-            />
-          </pattern>
           <linearGradient id="lac-skyline" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--gold)" stopOpacity="0" />
-            <stop offset="100%" stopColor="var(--bronze)" stopOpacity="0.09" />
+            <stop offset="0%" stopColor="var(--muted-foreground)" stopOpacity="0" />
+            <stop offset="100%" stopColor="var(--muted-foreground)" stopOpacity="0.05" />
           </linearGradient>
         </defs>
 
-        {/* Fine micro-grid across the whole canvas */}
-        <rect x="0" y="0" width="1440" height="980" fill="url(#lac-grid-fine)" />
-        {/* Bolder structural grid */}
-        <rect x="0" y="0" width="1440" height="980" fill="url(#lac-grid)" />
-
-        {/* A few long, thin structural diagonals (plan-like) */}
-        <g stroke="var(--gold)" strokeOpacity="0.05" strokeWidth="1">
-          <line x1="0" y1="980" x2="520" y2="120" />
-          <line x1="1440" y1="980" x2="920" y2="120" />
-          <line x1="720" y1="980" x2="720" y2="0" />
-        </g>
-
-        {/* --- Building silhouettes: a discreet skyline at the bottom --- */}
+        {/* Discreet skyline: buildings, villas and towers along the bottom */}
         <g fill="url(#lac-skyline)">
           {/* left cluster */}
           <rect x="40" y="640" width="70" height="340" rx="2" />
@@ -72,57 +43,6 @@ export function ArchitecturalBackdrop() {
           <rect x="1274" y="560" width="60" height="420" rx="2" />
           <rect x="1344" y="650" width="56" height="330" rx="2" />
         </g>
-
-        {/* Faint window dots on a couple of towers */}
-        <g fill="var(--gold)" fillOpacity="0.06">
-          {Array.from({ length: 6 }).map((_, r) =>
-            Array.from({ length: 4 }).map((__, c) => (
-              <rect
-                key={`w1-${r}-${c}`}
-                x={560 + c * 14}
-                y={420 + r * 64}
-                width="6"
-                height="10"
-                rx="1"
-              />
-            )),
-          )}
-          {Array.from({ length: 7 }).map((_, r) =>
-            Array.from({ length: 5 }).map((__, c) => (
-              <rect
-                key={`w2-${r}-${c}`}
-                x={830 + c * 16}
-                y={480 + r * 60}
-                width="6"
-                height="10"
-                rx="1"
-              />
-            )),
-          )}
-          {Array.from({ length: 5 }).map((_, r) =>
-            Array.from({ length: 3 }).map((__, c) => (
-              <rect
-                key={`w3-${r}-${c}`}
-                x={1180 + c * 22}
-                y={460 + r * 70}
-                width="7"
-                height="11"
-                rx="1"
-              />
-            )),
-          )}
-        </g>
-
-        {/* Soft horizon line */}
-        <line
-          x1="0"
-          y1="980"
-          x2="1440"
-          y2="980"
-          stroke="var(--bronze)"
-          strokeOpacity="0.08"
-          strokeWidth="1"
-        />
       </svg>
     </div>
   );
