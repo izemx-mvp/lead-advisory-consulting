@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as LeadsRouteImport } from './routes/leads'
+import { Route as ReportingRouteImport } from './routes/reporting'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
+import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +31,19 @@ const LeadsRoute = LeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReportingRoute = ReportingRouteImport.update({
+  id: '/reporting',
+  path: '/reporting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClientsIndexRoute = ClientsIndexRouteImport.update({
   id: '/clients/',
   path: '/clients/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
+  id: '/clients/$clientId',
+  path: '/clients/$clientId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -39,12 +51,16 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/leads': typeof LeadsRoute
+  '/reporting': typeof ReportingRoute
+  '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients/': typeof ClientsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/leads': typeof LeadsRoute
+  '/reporting': typeof ReportingRoute
+  '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients': typeof ClientsIndexRoute
 }
 export interface FileRoutesById {
@@ -52,20 +68,43 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/leads': typeof LeadsRoute
+  '/reporting': typeof ReportingRoute
+  '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients/': typeof ClientsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/leads' | '/clients/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/leads'
+    | '/reporting'
+    | '/clients/$clientId'
+    | '/clients/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/leads' | '/clients'
-  id: '__root__' | '/' | '/dashboard' | '/leads' | '/clients/'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/leads'
+    | '/reporting'
+    | '/clients/$clientId'
+    | '/clients'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/leads'
+    | '/reporting'
+    | '/clients/$clientId'
+    | '/clients/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   LeadsRoute: typeof LeadsRoute
+  ReportingRoute: typeof ReportingRoute
+  ClientsClientIdRoute: typeof ClientsClientIdRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
 }
 
@@ -92,11 +131,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reporting': {
+      id: '/reporting'
+      path: '/reporting'
+      fullPath: '/reporting'
+      preLoaderRoute: typeof ReportingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/clients/': {
       id: '/clients/'
       path: '/clients'
       fullPath: '/clients/'
       preLoaderRoute: typeof ClientsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clients/$clientId': {
+      id: '/clients/$clientId'
+      path: '/clients/$clientId'
+      fullPath: '/clients/$clientId'
+      preLoaderRoute: typeof ClientsClientIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -106,6 +159,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   LeadsRoute: LeadsRoute,
+  ReportingRoute: ReportingRoute,
+  ClientsClientIdRoute: ClientsClientIdRoute,
   ClientsIndexRoute: ClientsIndexRoute,
 }
 export const routeTree = rootRouteImport
