@@ -110,7 +110,7 @@ const mk = (
   lastContact,
   budget,
   timeline: tl(project),
-  conversation: conv(name.split(" ")[0], project),
+  conversation: conv(name.split(" ")[0] ?? name, project),
 });
 
 export const MOCK_LEADS: Lead[] = [
