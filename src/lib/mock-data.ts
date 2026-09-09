@@ -3,7 +3,7 @@ export type LeadStatus =
   | "Premier contact"
   | "Qualification en cours"
   | "Qualifié"
-  | "Rendez-vous programmé"
+  | "RDV programmé"
   | "Converti"
   | "Perdu";
 
@@ -12,46 +12,63 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "Premier contact",
   "Qualification en cours",
   "Qualifié",
-  "Rendez-vous programmé",
+  "RDV programmé",
   "Converti",
   "Perdu",
 ];
 
 export type Channel =
-  | "Prospection directe"
   | "Instagram"
-  | "LinkedIn"
-  | "Site web"
+  | "TikTok"
   | "Avito"
-  | "Partenariat agence";
+  | "Site web"
+  | "LinkedIn"
+  | "Prospection directe"
+  | "Partenariat";
 
 export const CHANNELS: Channel[] = [
-  "Prospection directe",
   "Instagram",
-  "LinkedIn",
-  "Site web",
+  "TikTok",
   "Avito",
-  "Partenariat agence",
+  "Site web",
+  "LinkedIn",
+  "Prospection directe",
+  "Partenariat",
 ];
 
 export type TimelineEvent = { label: string; date: string; detail?: string };
 export type ChatMessage = { from: "agent" | "lead"; text: string; time: string };
+export type Interaction = {
+  type: "Message IA" | "Appel" | "E-mail" | "WhatsApp" | "Visite";
+  label: string;
+  date: string;
+};
 
 export type Lead = {
   id: string;
   name: string;
   email: string;
   phone: string;
+  city: string;
   channel: Channel;
   project: string;
+  interest: string;
   status: LeadStatus;
-  lastContact: string;
+  createdAt: string; // ISO
+  lastContact: string; // ISO
   budget: string;
+  budgetValue: number;
+  score: number;
+  appointment?: { date: string; time: string; consultant: string };
   timeline: TimelineEvent[];
+  interactions: Interaction[];
   conversation: ChatMessage[];
 };
 
-const conv = (name: string, project: string): ChatMessage[] => [
+export const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+
+const conv = (name: string, project: string, budget: string): ChatMessage[] => [
   {
     from: "agent",
     text: `Bonjour ${name}, ici l'assistant de Lead Advisory Consulting. Merci pour votre intérêt concernant ${project}. Puis-je vous poser quelques questions ?`,
@@ -63,12 +80,8 @@ const conv = (name: string, project: string): ChatMessage[] => [
     text: "Quel est votre horizon d'acquisition et votre enveloppe budgétaire envisagée ?",
     time: "09:19",
   },
-  { from: "lead", text: "Sous 3 mois, autour de 2,5 MDH.", time: "09:24" },
-  {
-    from: "agent",
-    text: "Parfait. Souhaitez-vous un financement bancaire ou un achat comptant ?",
-    time: "09:25",
-  },
+  { from: "lead", text: `Sous 3 mois, autour de ${budget}.`, time: "09:24" },
+  { from: "agent", text: "Parfait. Souhaitez-vous un financement bancaire ou un achat comptant ?", time: "09:25" },
   { from: "lead", text: "Crédit bancaire, dossier déjà entamé.", time: "09:31" },
   {
     from: "agent",
@@ -83,53 +96,106 @@ const conv = (name: string, project: string): ChatMessage[] => [
   },
 ];
 
-const tl = (project: string): TimelineEvent[] => [
-  { label: "Réception du lead", date: "02/09/2026", detail: "Formulaire capté et enregistré" },
-  { label: "Premier contact automatique", date: "02/09/2026", detail: "Message envoyé par l'agent IA" },
-  { label: "Collecte d'informations", date: "03/09/2026", detail: `Intérêt : ${project}` },
-  { label: "Qualification", date: "04/09/2026", detail: "Lead qualifié par l'agent IA" },
-  { label: "Proposition de rendez-vous", date: "05/09/2026", detail: "Créneau proposé et réservé" },
+const tl = (interest: string, created: string, last: string): TimelineEvent[] => [
+  { label: "Réception du lead", date: fmtDate(created), detail: "Formulaire capté et enregistré" },
+  { label: "Premier contact automatique", date: fmtDate(created), detail: "Message envoyé par l'agent IA" },
+  { label: "Collecte d'informations", date: fmtDate(last), detail: `Intérêt : ${interest}` },
+  { label: "Qualification", date: fmtDate(last), detail: "Critères vérifiés par l'agent IA" },
 ];
 
-const mk = (
+const inter = (channel: Channel, last: string): Interaction[] => [
+  { type: "Message IA", label: `Séquence de qualification via ${channel}`, date: fmtDate(last) },
+  { type: "WhatsApp", label: "Relance automatique — sans réponse 48 h", date: fmtDate(last) },
+  { type: "Appel", label: "Appel de confirmation par un consultant", date: fmtDate(last) },
+];
+
+const CONSULTANTS = ["Houda Bennis", "Réda Alami", "Salma Cherkaoui"];
+
+type Seed = [
   id: string,
   name: string,
   channel: Channel,
   project: string,
+  interest: string,
   status: LeadStatus,
-  lastContact: string,
-  budget: string,
-): Lead => ({
-  id,
-  name,
-  email: `${name.toLowerCase().replace(/[^a-z]/g, ".")}@exemple.ma`,
-  phone: "+212 6 00 00 00 00",
-  channel,
-  project,
-  status,
-  lastContact,
-  budget,
-  timeline: tl(project),
-  conversation: conv(name.split(" ")[0] ?? name, project),
-});
-
-export const MOCK_LEADS: Lead[] = [
-  mk("L-001", "Yassine Bennani", "Instagram", "Villa à Souissi", "Nouveau", "05/09/2026", "4,2 MDH"),
-  mk("L-002", "Salma Chraibi", "Site web", "Appartement à Harhoura", "Nouveau", "05/09/2026", "1,6 MDH"),
-  mk("L-003", "Omar El Fassi", "LinkedIn", "Projet Rabat Océan", "Premier contact", "04/09/2026", "3,1 MDH"),
-  mk("L-004", "Nadia Alaoui", "Avito", "Appartement à Témara", "Premier contact", "04/09/2026", "1,2 MDH"),
-  mk("L-005", "Karim Tazi", "Partenariat agence", "Villa à Harhoura", "Qualification en cours", "03/09/2026", "5,4 MDH"),
-  mk("L-006", "Imane Berrada", "Instagram", "Appartement à Rabat Océan", "Qualification en cours", "03/09/2026", "2,0 MDH"),
-  mk("L-007", "Hamza Sebti", "Prospection directe", "Villa à Souissi", "Qualifié", "02/09/2026", "6,0 MDH"),
-  mk("L-008", "Leila Benjelloun", "Site web", "Appartement à Harhoura", "Qualifié", "02/09/2026", "1,8 MDH"),
-  mk("L-009", "Mehdi Ouazzani", "LinkedIn", "Projet Rabat Océan", "Rendez-vous programmé", "01/09/2026", "2,5 MDH"),
-  mk("L-010", "Sofia Idrissi", "Instagram", "Villa à Harhoura", "Rendez-vous programmé", "01/09/2026", "4,8 MDH"),
-  mk("L-011", "Rachid Amrani", "Avito", "Appartement à Témara", "Converti", "28/08/2026", "1,3 MDH"),
-  mk("L-012", "Hind Lahlou", "Partenariat agence", "Villa à Souissi", "Converti", "26/08/2026", "5,1 MDH"),
-  mk("L-013", "Adil Naciri", "Prospection directe", "Appartement à Harhoura", "Perdu", "22/08/2026", "1,1 MDH"),
-  mk("L-014", "Meryem Kabbaj", "Site web", "Projet Rabat Océan", "Perdu", "20/08/2026", "2,2 MDH"),
-  mk("L-015", "Younes Skalli", "Instagram", "Villa à Harhoura", "Nouveau", "05/09/2026", "3,9 MDH"),
+  created: string,
+  last: string,
+  budget: number,
+  city: string,
+  score: number,
 ];
+
+const SEEDS: Seed[] = [
+  ["L-001", "Yassine Bennani", "Instagram", "Villa à Souissi", "Projet Souissi Prestige", "Nouveau", "2026-09-08", "2026-09-08", 4.2, "Rabat", 62, ],
+  ["L-002", "Salma Chraibi", "Site web", "Appartement à Harhoura", "Résidence Harhoura Plage", "Nouveau", "2026-09-08", "2026-09-09", 1.6, "Témara", 48],
+  ["L-003", "Omar El Fassi", "LinkedIn", "Projet Rabat Océan", "Projet Rabat Océan", "Premier contact", "2026-09-06", "2026-09-07", 3.1, "Rabat", 71],
+  ["L-004", "Nadia Alaoui", "Avito", "Appartement à Témara", "Résidence Témara Centre", "Premier contact", "2026-09-05", "2026-09-07", 1.2, "Témara", 44],
+  ["L-005", "Karim Tazi", "Partenariat", "Villa à Harhoura", "Villas Harhoura Bay", "Qualification en cours", "2026-09-03", "2026-09-06", 5.4, "Casablanca", 83],
+  ["L-006", "Imane Berrada", "Instagram", "Appartement à Rabat Océan", "Projet Rabat Océan", "Qualification en cours", "2026-09-02", "2026-09-06", 2.0, "Rabat", 66],
+  ["L-007", "Hamza Sebti", "Prospection directe", "Villa à Souissi", "Projet Souissi Prestige", "Qualifié", "2026-08-30", "2026-09-05", 6.0, "Rabat", 91],
+  ["L-008", "Leila Benjelloun", "Site web", "Appartement à Harhoura", "Résidence Harhoura Plage", "Qualifié", "2026-08-29", "2026-09-04", 1.8, "Témara", 74],
+  ["L-009", "Mehdi Ouazzani", "LinkedIn", "Projet Rabat Océan", "Projet Rabat Océan", "RDV programmé", "2026-08-28", "2026-09-03", 2.5, "Rabat", 88],
+  ["L-010", "Sofia Idrissi", "Instagram", "Villa à Harhoura", "Villas Harhoura Bay", "RDV programmé", "2026-08-27", "2026-09-02", 4.8, "Rabat", 86],
+  ["L-011", "Rachid Amrani", "Avito", "Appartement à Témara", "Résidence Témara Centre", "Converti", "2026-08-10", "2026-08-28", 1.3, "Témara", 95],
+  ["L-012", "Hind Lahlou", "Partenariat", "Villa à Souissi", "Projet Souissi Prestige", "Converti", "2026-08-05", "2026-08-26", 5.1, "Rabat", 94],
+  ["L-013", "Adil Naciri", "Prospection directe", "Appartement à Harhoura", "Résidence Harhoura Plage", "Perdu", "2026-08-02", "2026-08-22", 1.1, "Témara", 22],
+  ["L-014", "Meryem Kabbaj", "Site web", "Projet Rabat Océan", "Projet Rabat Océan", "Perdu", "2026-07-30", "2026-08-20", 2.2, "Salé", 18],
+  ["L-015", "Younes Skalli", "Instagram", "Villa à Harhoura", "Villas Harhoura Bay", "Nouveau", "2026-09-09", "2026-09-09", 3.9, "Rabat", 57],
+  ["L-016", "Ghita Bouhaddou", "TikTok", "Appartement à Témara", "Résidence Témara Centre", "Nouveau", "2026-09-09", "2026-09-09", 1.4, "Témara", 39],
+  ["L-017", "Anas Belkadi", "TikTok", "Studio à Harhoura", "Résidence Harhoura Plage", "Premier contact", "2026-09-07", "2026-09-08", 0.9, "Témara", 41],
+  ["L-018", "Zineb Marrakchi", "Avito", "Appartement à Rabat Océan", "Projet Rabat Océan", "Qualification en cours", "2026-09-04", "2026-09-08", 2.3, "Rabat", 68],
+  ["L-019", "Tarik Benslimane", "LinkedIn", "Plateau bureaux Agdal", "Bureaux Agdal Business", "Qualifié", "2026-08-31", "2026-09-06", 7.5, "Rabat", 89],
+  ["L-020", "Nawal Ait Ali", "Partenariat", "Villa à Harhoura", "Villas Harhoura Bay", "RDV programmé", "2026-08-26", "2026-09-05", 4.4, "Casablanca", 84],
+  ["L-021", "Ilyas Berrechid", "Site web", "Terrain à Sidi Yahya", "Terrains Sidi Yahya", "Premier contact", "2026-09-05", "2026-09-07", 3.3, "Témara", 52],
+  ["L-022", "Sanaa Guessous", "Instagram", "Appartement à Souissi", "Projet Souissi Prestige", "Qualification en cours", "2026-09-01", "2026-09-06", 2.9, "Rabat", 70],
+  ["L-023", "Mohamed Zeroual", "Prospection directe", "Villa à Souissi", "Projet Souissi Prestige", "Qualifié", "2026-08-25", "2026-09-04", 8.2, "Rabat", 92],
+  ["L-024", "Kenza Filali", "TikTok", "Appartement à Harhoura", "Résidence Harhoura Plage", "Perdu", "2026-08-12", "2026-08-24", 1.5, "Témara", 25],
+  ["L-025", "Reda Bouazza", "Avito", "Appartement à Témara", "Résidence Témara Centre", "Converti", "2026-07-28", "2026-08-18", 1.7, "Témara", 90],
+  ["L-026", "Amine Ouarzazi", "LinkedIn", "Plateau bureaux Agdal", "Bureaux Agdal Business", "Qualification en cours", "2026-09-02", "2026-09-08", 6.1, "Rabat", 76],
+  ["L-027", "Lamia Sqalli", "Site web", "Villa à Harhoura", "Villas Harhoura Bay", "Nouveau", "2026-09-08", "2026-09-09", 5.0, "Rabat", 60],
+  ["L-028", "Othmane Rifai", "Partenariat", "Programme Rabat Océan — lot C", "Projet Rabat Océan", "Qualifié", "2026-08-24", "2026-09-03", 9.4, "Casablanca", 93],
+  ["L-029", "Dounia Mekouar", "Instagram", "Appartement à Témara", "Résidence Témara Centre", "Premier contact", "2026-09-06", "2026-09-08", 1.35, "Témara", 46],
+  ["L-030", "Khalid Bennis", "Prospection directe", "Terrain à Sidi Yahya", "Terrains Sidi Yahya", "RDV programmé", "2026-08-29", "2026-09-05", 4.6, "Témara", 81],
+];
+
+const slug = (name: string) => name.toLowerCase().normalize("NFD").replace(/[^a-z ]/g, "").trim().replace(/ +/g, ".");
+
+export const MOCK_LEADS: Lead[] = SEEDS.map(
+  ([id, name, channel, project, interest, status, created, last, budget, city, score], i) => {
+    const lead: Lead = {
+      id,
+      name,
+      email: `${slug(name)}@exemple.ma`,
+      phone: `+212 6 ${String(10 + (i % 80)).padStart(2, "0")} ${String(20 + i).padStart(2, "0")} ${String(30 + i).padStart(2, "0")} ${String(40 + i).padStart(2, "0")}`,
+      city,
+      channel,
+      project,
+      interest,
+      status,
+      createdAt: created,
+      lastContact: last,
+      budget: `${budget.toLocaleString("fr-FR")} MDH`,
+      budgetValue: budget,
+      score,
+      timeline: tl(interest, created, last),
+      interactions: inter(channel, last),
+      conversation: conv(name.split(" ")[0] ?? name, project, `${budget.toLocaleString("fr-FR")} MDH`),
+    };
+    if (status === "RDV programmé") {
+      lead.appointment = {
+        date: fmtDate("2026-09-12"),
+        time: ["10:00", "14:00", "16:30"][i % 3] ?? "14:00",
+        consultant: CONSULTANTS[i % 3] ?? "Houda Bennis",
+      };
+      lead.timeline.push({
+        label: "Rendez-vous confirmé",
+        date: fmtDate("2026-09-12"),
+        detail: "Créneau réservé par l'agent IA",
+      });
+    }
+    return lead;
+  },
+);
 
 export type QuoteStatus = "En attente" | "Validé" | "Refusé";
 export type InvoiceStatus = "Payée" | "En attente" | "En retard";
@@ -237,31 +303,125 @@ export const MOCK_CLIENTS: Client[] = [
       { label: "Dossier clôturé", date: "01/08/2026" },
     ],
   },
+  {
+    id: "C-105",
+    name: "Reda Bouazza",
+    project: "Appartement à Témara",
+    dossier: "En cours",
+    amount: 1700000,
+    email: "reda.bouazza@exemple.ma",
+    phone: "+212 6 62 41 08 77",
+    quotes: [{ id: "D-2220", label: "Accompagnement acquisition", amount: 58000, status: "Validé" }],
+    invoices: [
+      { id: "F-5530", label: "Acompte conseil", amount: 20000, status: "Payée", due: "25/08/2026" },
+      { id: "F-5531", label: "Solde mission", amount: 38000, status: "En attente", due: "30/09/2026" },
+    ],
+    notifications: [{ id: "N-7", label: "Compromis en préparation", tone: "info", date: "05/09/2026" }],
+    timeline: [
+      { label: "Lead converti en client", date: "18/08/2026" },
+      { label: "Sélection de biens envoyée", date: "22/08/2026" },
+      { label: "Visite réalisée", date: "01/09/2026" },
+    ],
+  },
+  {
+    id: "C-106",
+    name: "Résidences Atlas Invest",
+    project: "Villas Harhoura Bay — tranche 1",
+    dossier: "Ouvert",
+    amount: 12500000,
+    email: "invest@atlas-residences.ma",
+    phone: "+212 5 37 45 12 90",
+    quotes: [{ id: "D-2225", label: "Stratégie de commercialisation", amount: 280000, status: "En attente" }],
+    invoices: [],
+    notifications: [{ id: "N-8", label: "Devis D-2225 envoyé", tone: "info", date: "07/09/2026" }],
+    timeline: [
+      { label: "Ouverture du dossier", date: "03/09/2026" },
+      { label: "Réunion de cadrage", date: "06/09/2026" },
+    ],
+  },
+  {
+    id: "C-107",
+    name: "Nawal Ait Ali",
+    project: "Villa à Harhoura",
+    dossier: "En cours",
+    amount: 4400000,
+    email: "nawal.aitali@exemple.ma",
+    phone: "+212 6 70 33 21 55",
+    quotes: [{ id: "D-2228", label: "Accompagnement acquisition premium", amount: 132000, status: "En attente" }],
+    invoices: [{ id: "F-5540", label: "Acompte mission", amount: 44000, status: "En retard", due: "02/09/2026" }],
+    notifications: [{ id: "N-9", label: "Relance de paiement envoyée", tone: "warning", date: "06/09/2026" }],
+    timeline: [
+      { label: "Lead converti en client", date: "20/08/2026" },
+      { label: "Devis émis", date: "26/08/2026" },
+    ],
+  },
+  {
+    id: "C-108",
+    name: "Tarik Benslimane",
+    project: "Bureaux Agdal Business",
+    dossier: "Clôturé",
+    amount: 7500000,
+    email: "tarik.benslimane@exemple.ma",
+    phone: "+212 6 44 91 27 63",
+    quotes: [{ id: "D-2180", label: "Recherche & négociation bureaux", amount: 190000, status: "Validé" }],
+    invoices: [{ id: "F-5480", label: "Mission complète", amount: 190000, status: "Payée", due: "15/07/2026" }],
+    notifications: [{ id: "N-10", label: "Dossier clôturé", tone: "info", date: "18/07/2026" }],
+    timeline: [
+      { label: "Ouverture du dossier", date: "02/05/2026" },
+      { label: "Bail signé", date: "12/07/2026" },
+      { label: "Dossier clôturé", date: "18/07/2026" },
+    ],
+  },
 ];
 
 export const ACTIVITY = [
   { label: "Nouveau lead reçu via Instagram", who: "Younes Skalli", time: "il y a 12 min", tone: "info" as const },
+  { label: "Lead capté via TikTok", who: "Ghita Bouhaddou", time: "il y a 48 min", tone: "info" as const },
   { label: "Devis validé", who: "Rachid Amrani — D-2202", time: "il y a 2 h", tone: "success" as const },
   { label: "Rendez-vous programmé par l'agent IA", who: "Sofia Idrissi", time: "il y a 4 h", tone: "info" as const },
+  { label: "Lead qualifié — budget 8,2 MDH", who: "Mohamed Zeroual", time: "il y a 6 h", tone: "success" as const },
   { label: "Facture en retard", who: "Groupe Bennis Immo — F-5521", time: "hier", tone: "warning" as const },
+  { label: "Relance de paiement envoyée", who: "Nawal Ait Ali — F-5540", time: "hier", tone: "warning" as const },
   { label: "Lead converti en client", who: "Hind Lahlou", time: "il y a 3 j", tone: "success" as const },
 ];
 
+export type AppNotification = {
+  id: string;
+  title: string;
+  detail: string;
+  time: string;
+  tone: "info" | "success" | "warning";
+  read: boolean;
+};
+
+export const MOCK_NOTIFICATIONS: AppNotification[] = [
+  { id: "AN-1", title: "3 nouveaux leads Instagram", detail: "Captés ce matin par l'agent de prospection", time: "il y a 12 min", tone: "info", read: false },
+  { id: "AN-2", title: "Rendez-vous confirmé", detail: "Sofia Idrissi — 12 sept. à 14:00", time: "il y a 4 h", tone: "success", read: false },
+  { id: "AN-3", title: "Validation humaine requise", detail: "Devis D-2216 — Groupe Bennis Immo", time: "il y a 5 h", tone: "warning", read: false },
+  { id: "AN-4", title: "Facture en retard", detail: "F-5521 — 96 000 MAD depuis le 31/08", time: "hier", tone: "warning", read: false },
+  { id: "AN-5", title: "Publication prête", detail: "Post LinkedIn « Investir à Harhoura » à valider", time: "hier", tone: "info", read: true },
+  { id: "AN-6", title: "Lead converti", detail: "Reda Bouazza — dossier C-105 ouvert", time: "il y a 3 j", tone: "success", read: true },
+];
+
 export const MONTHLY = [
-  { mois: "Avr", leads: 42, clients: 6 },
-  { mois: "Mai", leads: 55, clients: 8 },
-  { mois: "Juin", leads: 61, clients: 9 },
-  { mois: "Juil", leads: 58, clients: 7 },
-  { mois: "Août", leads: 74, clients: 12 },
-  { mois: "Sept", leads: 83, clients: 14 },
+  { mois: "Jan", leads: 34, clients: 4, ca: 180 },
+  { mois: "Fév", leads: 39, clients: 5, ca: 210 },
+  { mois: "Mar", leads: 47, clients: 6, ca: 245 },
+  { mois: "Avr", leads: 42, clients: 6, ca: 232 },
+  { mois: "Mai", leads: 55, clients: 8, ca: 288 },
+  { mois: "Juin", leads: 61, clients: 9, ca: 305 },
+  { mois: "Juil", leads: 58, clients: 7, ca: 264 },
+  { mois: "Août", leads: 74, clients: 12, ca: 356 },
+  { mois: "Sept", leads: 83, clients: 14, ca: 402 },
 ];
 
 export const CHANNEL_PERF = [
   { canal: "Instagram", leads: 96, conversion: 21 },
+  { canal: "TikTok", leads: 71, conversion: 12 },
   { canal: "LinkedIn", leads: 64, conversion: 26 },
   { canal: "Site web", leads: 78, conversion: 18 },
   { canal: "Avito", leads: 52, conversion: 9 },
-  { canal: "Partenariat agence", leads: 38, conversion: 31 },
+  { canal: "Partenariat", leads: 38, conversion: 31 },
   { canal: "Prospection directe", leads: 45, conversion: 14 },
 ];
 
@@ -302,6 +462,20 @@ export const MOCK_POSTS: Post[] = [
     status: "Brouillon",
     excerpt: "Depuis 16 ans, Lead Advisory Consulting accompagne investisseurs et particuliers.",
   },
+  {
+    id: "P-5",
+    title: "Bureaux Agdal Business — dernières surfaces",
+    network: "LinkedIn",
+    status: "Prêt",
+    excerpt: "Plateaux modulables au cœur de l'Agdal : une opportunité rare pour les entreprises.",
+  },
+  {
+    id: "P-6",
+    title: "Villas Harhoura Bay — visite privée",
+    network: "Instagram",
+    status: "Brouillon",
+    excerpt: "Vue océan, patios ombragés et prestations sur mesure. Visites sur rendez-vous.",
+  },
 ];
 
 export const GENERATED_POSTS: Record<string, string> = {
@@ -338,6 +512,13 @@ export const MOCK_KNOWLEDGE: KnowledgeItem[] = [
       "Un lead est transmis à un consultant humain dès qu'un rendez-vous est proposé et accepté par le prospect.",
   },
   {
+    id: "K-7",
+    category: "Critères de qualification",
+    title: "Leads non qualifiés",
+    content:
+      "Budget hors marché, zone non couverte ou absence de projet à moins de 12 mois : le lead est classé « Perdu » avec motif.",
+  },
+  {
     id: "K-3",
     category: "Projets immobiliers",
     title: "Villas à Souissi et Harhoura",
@@ -348,6 +529,12 @@ export const MOCK_KNOWLEDGE: KnowledgeItem[] = [
     category: "Projets immobiliers",
     title: "Programme Rabat Océan",
     content: "Programme résidentiel avec tranches successives ; première tranche livrée.",
+  },
+  {
+    id: "K-8",
+    category: "Projets immobiliers",
+    title: "Bureaux Agdal Business",
+    content: "Plateaux professionnels modulables à l'Agdal, destinés aux entreprises et professions libérales.",
   },
   {
     id: "K-5",
@@ -361,6 +548,12 @@ export const MOCK_KNOWLEDGE: KnowledgeItem[] = [
     category: "Réponses types",
     title: "Documents nécessaires",
     content: "Pièce d'identité, justificatifs de revenus et accord de principe bancaire le cas échéant.",
+  },
+  {
+    id: "K-9",
+    category: "Réponses types",
+    title: "Délai de réponse",
+    content: "L'agent IA répond en moins de 2 minutes ; un consultant reprend la main sous 24 h ouvrées.",
   },
 ];
 
