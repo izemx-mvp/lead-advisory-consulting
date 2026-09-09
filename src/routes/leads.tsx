@@ -724,21 +724,116 @@ function GridCard({ lead, onOpen, delay }: { lead: Lead; onOpen: () => void; del
   );
 }
 
+type ListSortKey = "name" | "interest" | "channel" | "status" | "budget" | "score" | "lastContact";
+
+const LIST_COLUMNS: { key: ListSortKey; label: string }[] = [
+  { key: "name", label: "Lead" },
+  { key: "interest", label: "Intérêt" },
+  { key: "channel", label: "Source" },
+  { key: "status", label: "Statut" },
+  { key: "budget", label: "Budget" },
+  { key: "score", label: "Score" },
+  { key: "lastContact", label: "Dernier contact" },
+];
+
 function ListView({ leads, onOpen }: { leads: Lead[]; onOpen: (id: string) => void }) {
+  const [sortKey, setSortKey] = useState<ListSortKey | null>(null);
+  const [dir, setDir] = useState<"asc" | "desc">("asc");
+
+  const toggle = (k: ListSortKey) => {
+    if (sortKey === k) {
+      if (dir === "asc") setDir("desc");
+      else {
+        setSortKey(null);
+        setDir("asc");
+      }
+    } else {
+      setSortKey(k);
+      setDir("asc");
+    }
+  };
+
+  const rows = useMemo(() => {
+    if (!sortKey) return leads;
+    const s = dir === "asc" ? 1 : -1;
+    return [...leads].sort((a, b) => {
+      switch (sortKey) {
+        case "budget":
+          return (a.budgetValue - b.budgetValue) * s;
+        case "score":
+          return (a.score - b.score) * s;
+        case "lastContact":
+          return (new Date(a.lastContact).getTime() - new Date(b.lastContact).getTime()) * s;
+        case "interest":
+          return a.interest.localeCompare(b.interest) * s;
+        case "channel":
+          return a.channel.localeCompare(b.channel) * s;
+        case "status":
+          return (LEAD_STATUSES.indexOf(a.status) - LEAD_STATUSES.indexOf(b.status)) * s;
+        default:
+          return a.name.localeCompare(b.name) * s;
+      }
+    });
+  }, [leads, sortKey, dir]);
+
   return (
     <div className="panel overflow-x-auto">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-3">
+        <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Trier la liste</span>
+        {LIST_COLUMNS.map((c) => (
+          <button
+            key={c.key}
+            onClick={() => toggle(c.key)}
+            className={`press inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] transition-colors ${
+              sortKey === c.key
+                ? "border-primary bg-primary/15 font-semibold"
+                : "border-border text-muted-foreground hover:border-primary/60"
+            }`}
+          >
+            {c.label}
+            {sortKey === c.key && (dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
+          </button>
+        ))}
+        {sortKey && (
+          <button
+            onClick={() => {
+              setSortKey(null);
+              setDir("asc");
+            }}
+            className="press rounded-full border border-border px-3 py-1 text-[11px] text-muted-foreground hover:border-primary/60"
+          >
+            Réinitialiser le tri
+          </button>
+        )}
+      </div>
       <table className="w-full min-w-[860px]">
         <thead className="border-b border-border bg-sidebar/60">
           <tr>
-            {["Lead", "Intérêt", "Source", "Statut", "Budget", "Score", "Dernier contact"].map((h) => (
-              <th key={h} className="px-4 py-3 text-left text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                {h}
+            {LIST_COLUMNS.map((h) => (
+              <th key={h.key} className="px-4 py-3 text-left">
+                <button
+                  onClick={() => toggle(h.key)}
+                  className={`inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.14em] transition-colors hover:text-primary ${
+                    sortKey === h.key ? "font-semibold text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {h.label}
+                  {sortKey === h.key ? (
+                    dir === "asc" ? (
+                      <ArrowUp className="h-3 w-3" />
+                    ) : (
+                      <ArrowDown className="h-3 w-3" />
+                    )
+                  ) : (
+                    <ArrowUpDown className="h-3 w-3 opacity-40" />
+                  )}
+                </button>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {leads.map((l, i) => {
+          {rows.map((l, i) => {
             const Icon = channelIcon[l.channel];
             return (
               <tr
