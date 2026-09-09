@@ -41,9 +41,9 @@ export function Counter({
   decimals = 0,
 }: {
   value: number;
-  suffix?: string;
-  prefix?: string;
-  decimals?: number;
+  suffix?: string | undefined;
+  prefix?: string | undefined;
+  decimals?: number | undefined;
 }) {
   const [display, setDisplay] = useState(0);
   const raf = useRef<number>(0);
