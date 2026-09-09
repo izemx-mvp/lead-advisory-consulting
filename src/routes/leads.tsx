@@ -53,7 +53,7 @@ export const Route = createFileRoute("/leads")({
   component: LeadsPage,
 });
 
-const channelIcon: Record<Channel, React.ComponentType<{ className?: string }>> = {
+const channelIcon: Record<Channel, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   Instagram: Instagram,
   TikTok: Music2,
   Avito: Store,

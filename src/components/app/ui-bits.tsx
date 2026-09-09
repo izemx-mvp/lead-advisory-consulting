@@ -6,19 +6,21 @@ export function StatusBadge({
   tone = "neutral",
 }: {
   label: string;
-  tone?: "neutral" | "success" | "warning" | "danger" | "gold" | "info";
+  tone?: "neutral" | "success" | "warning" | "danger" | "gold" | "info" | "violet" | "teal";
 }) {
   const tones: Record<string, string> = {
     neutral: "border-border bg-muted text-muted-foreground",
-    success: "border-[var(--success)]/40 bg-[var(--success)]/12 text-[var(--success)]",
-    warning: "border-[var(--warning)]/45 bg-[var(--warning)]/15 text-[oklch(0.5_0.11_70)]",
-    danger: "border-destructive/40 bg-destructive/10 text-destructive",
-    gold: "border-primary/50 bg-primary/15 text-[oklch(0.45_0.07_63)]",
-    info: "border-[var(--info)]/40 bg-[var(--info)]/10 text-[var(--info)]",
+    success: "border-[var(--emerald)]/45 bg-[var(--emerald)]/12 text-[var(--emerald)]",
+    warning: "border-[var(--warning)]/50 bg-[var(--warning)]/15 text-[var(--warning)]",
+    danger: "border-[var(--terracotta)]/45 bg-[var(--terracotta)]/12 text-[var(--terracotta)]",
+    gold: "border-primary/55 bg-primary/15 text-primary",
+    info: "border-[var(--azure)]/45 bg-[var(--azure)]/12 text-[var(--azure)]",
+    violet: "border-[var(--violet)]/45 bg-[var(--violet)]/12 text-[var(--violet)]",
+    teal: "border-[var(--teal)]/45 bg-[var(--teal)]/12 text-[var(--teal)]",
   };
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${tones[tone]}`}
+      className={`inline-flex items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[11px] font-medium transition-colors ${tones[tone]}`}
     >
       {label}
     </span>
@@ -27,7 +29,7 @@ export function StatusBadge({
 
 export function HumanCheckBadge({ children = "Validation humaine requise" }: { children?: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/50 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-[oklch(0.45_0.07_63)]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/50 bg-primary/12 px-2.5 py-1 text-[11px] font-medium text-primary">
       <ShieldCheck className="h-3.5 w-3.5" />
       {children}
     </span>
@@ -73,6 +75,16 @@ export function Counter({
   );
 }
 
+export type Accent = "gold" | "azure" | "emerald" | "violet" | "terracotta" | "teal";
+const accentVar: Record<Accent, string> = {
+  gold: "var(--gold)",
+  azure: "var(--azure)",
+  emerald: "var(--emerald)",
+  violet: "var(--violet)",
+  terracotta: "var(--terracotta)",
+  teal: "var(--teal)",
+};
+
 export function KpiCard({
   label,
   value,
@@ -82,6 +94,7 @@ export function KpiCard({
   hint,
   icon: Icon,
   delay = 0,
+  accent = "gold",
 }: {
   label: string;
   value: number;
@@ -91,15 +104,24 @@ export function KpiCard({
   hint?: string;
   icon: React.ComponentType<{ className?: string }>;
   delay?: number;
+  accent?: Accent;
 }) {
+  const c = accentVar[accent];
   return (
     <div
-      className="panel animate-rise group p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
+      className="panel panel-hover animate-rise group relative overflow-hidden p-5"
       style={{ animationDelay: `${delay}ms` }}
     >
+      <span
+        className="absolute inset-x-0 top-0 h-1 opacity-80 transition-opacity group-hover:opacity-100"
+        style={{ background: `linear-gradient(90deg, ${c}, transparent)` }}
+      />
       <div className="flex items-start justify-between">
         <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-        <span className="rounded-lg bg-primary/15 p-2 text-primary transition-transform duration-300 group-hover:scale-110">
+        <span
+          className="rounded-lg p-2 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
+          style={{ background: `color-mix(in oklab, ${c} 16%, transparent)`, color: c }}
+        >
           <Icon className="h-4 w-4" />
         </span>
       </div>
@@ -129,7 +151,7 @@ export function Timeline({ items }: { items: { label: string; date: string; deta
           className="animate-rise relative py-3 pl-6"
           style={{ animationDelay: `${i * 90}ms` }}
         >
-          <span className="absolute -left-[7px] top-5 h-3 w-3 rounded-full border-2 border-background bg-primary" />
+          <span className="absolute -left-[7px] top-5 h-3 w-3 rounded-full border-2 border-background bg-primary transition-transform duration-200 hover:scale-125" />
           <p className="text-sm font-medium">{it.label}</p>
           {it.detail && <p className="text-xs text-muted-foreground">{it.detail}</p>}
           <p className="mt-0.5 text-[11px] uppercase tracking-wider text-muted-foreground">{it.date}</p>
@@ -144,8 +166,12 @@ export const leadStatusTone = (s: string) =>
     ? "success"
     : s === "Perdu"
       ? "danger"
-      : s === "Qualifié" || s === "Rendez-vous programmé"
-        ? "gold"
-        : s === "Qualification en cours"
-          ? "warning"
-          : "neutral";
+      : s === "RDV programmé"
+        ? "violet"
+        : s === "Qualifié"
+          ? "gold"
+          : s === "Qualification en cours"
+            ? "warning"
+            : s === "Premier contact"
+              ? "teal"
+              : "info";
