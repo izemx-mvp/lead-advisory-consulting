@@ -35,6 +35,9 @@ import {
   Wallet,
   Clock,
   MessageSquare,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { HumanCheckBadge, SectionTitle, StatusBadge, Timeline, leadStatusTone } from "@/components/app/ui-bits";
