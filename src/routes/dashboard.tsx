@@ -3,7 +3,18 @@ import { Users, TrendingUp, Briefcase, Wallet, ArrowUpRight } from "lucide-react
 import { AppShell } from "@/components/app/AppShell";
 import { KpiCard, SectionTitle, StatusBadge, leadStatusTone } from "@/components/app/ui-bits";
 import { useCrm } from "@/lib/crm-store";
-import { ACTIVITY, LEAD_STATUSES } from "@/lib/mock-data";
+import { ACTIVITY, LEAD_STATUSES, type LeadStatus } from "@/lib/mock-data";
+import bannerImg from "@/assets/prop-rabat-ocean.jpg";
+
+const STATUS_COLOR: Record<LeadStatus, string> = {
+  Nouveau: "var(--azure)",
+  "Premier contact": "var(--teal)",
+  "Qualification en cours": "var(--warning)",
+  Qualifié: "var(--gold)",
+  "RDV programmé": "var(--violet)",
+  Converti: "var(--emerald)",
+  Perdu: "var(--terracotta)",
+};
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
