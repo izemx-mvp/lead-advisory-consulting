@@ -79,11 +79,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "CRM Lead Advisory Consulting" },
+      {
+        name: "description",
+        content:
+          "CRM immobilier intelligent de Lead Advisory Consulting — prospection, clients, reporting et marketing.",
+      },
+      { name: "author", content: "Lead Advisory Consulting" },
+      { property: "og:title", content: "CRM Lead Advisory Consulting" },
+      {
+        property: "og:description",
+        content: "Plateforme CRM immobilière premium pour Lead Advisory Consulting, Harhoura — Témara.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
