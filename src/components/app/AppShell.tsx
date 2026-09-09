@@ -125,7 +125,7 @@ export function AppShell({
   );
 }
 
-function TopBar({ title, subtitle }: { title: string; subtitle?: string }) {
+function TopBar({ title, subtitle }: { title: string; subtitle?: string | undefined }) {
   const { theme, toggle } = useTheme();
   const [open, setOpen] = useState<"search" | "notif" | "profile" | null>(null);
   const [notifs, setNotifs] = useState(MOCK_NOTIFICATIONS);
