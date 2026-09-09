@@ -184,7 +184,7 @@ function ClientDetail() {
                       addClientEvent(client.id, { label: "Relance envoyée", date: "Aujourd'hui", detail: "Relance de suivi de dossier" }, "Relance envoyée au client");
                       toast.success("Relance simulée envoyée");
                     }}
-                    className="flex items-center gap-2 rounded-lg border border-primary/50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-[oklch(0.45_0.07_63)] transition-colors hover:bg-primary/15"
+                    className="flex items-center gap-2 rounded-lg border border-primary/50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-primary/15"
                   >
                     <RefreshCcw className="h-4 w-4" /> Envoyer une relance
                   </button>

@@ -24,10 +24,10 @@ function Dashboard() {
   return (
     <AppShell title="Tableau de bord" subtitle="Vue d'ensemble de l'activité commerciale">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Leads actifs" value={active} icon={Users} hint="Pipeline en cours" />
-        <KpiCard label="Taux de conversion" value={19.4} suffix=" %" decimals={1} icon={TrendingUp} hint="+2,3 pts vs mois dernier" delay={80} />
-        <KpiCard label="Clients actifs" value={clients.filter((c) => c.dossier !== "Clôturé").length} icon={Briefcase} hint="Dossiers ouverts et en cours" delay={160} />
-        <KpiCard label="Chiffre d'affaires" value={1842000} suffix=" MAD" icon={Wallet} hint="Cumul 2026" delay={240} />
+        <KpiCard label="Leads actifs" value={active} icon={Users} hint="Pipeline en cours" accent="azure" />
+        <KpiCard label="Taux de conversion" value={19.4} suffix=" %" decimals={1} icon={TrendingUp} hint="+2,3 pts vs mois dernier" delay={80} accent="emerald" />
+        <KpiCard label="Clients actifs" value={clients.filter((c) => c.dossier !== "Clôturé").length} icon={Briefcase} hint="Dossiers ouverts et en cours" delay={160} accent="violet" />
+        <KpiCard label="Chiffre d'affaires" value={1842000} suffix=" MAD" icon={Wallet} hint="Cumul 2026" delay={240} accent="gold" />
       </div>
 
       <div className="mt-8 grid gap-6 xl:grid-cols-3">
@@ -117,7 +117,7 @@ function Dashboard() {
           </ul>
 
           <div className="mt-5 rounded-lg border border-primary/40 bg-primary/10 p-4">
-            <p className="text-xs uppercase tracking-[0.16em] text-[oklch(0.45_0.07_63)]">Agents IA actifs</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-primary">Agents IA actifs</p>
             <p className="mt-2 text-sm">
               Prospection & qualification en fonctionnement — {leads.filter((l) => leadStatusTone(l.status) === "gold").length} leads
               prêts pour intervention humaine.
