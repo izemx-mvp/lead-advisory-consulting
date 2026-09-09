@@ -36,7 +36,7 @@ const NAV = [
   { to: "/leads", label: "Prospection / Leads", icon: Filter },
   { to: "/clients", label: "Clients / Ventes", icon: Users },
   { to: "/reporting", label: "Reporting / KPI", icon: BarChart3 },
-  { to: "/marketing", label: "Marketing", icon: Megaphone },
+  { to: "/marketing", label: "Community Manager AI", icon: Megaphone },
   { to: "/knowledge", label: "Base de connaissances", icon: BookOpen },
 ] as const;
 
