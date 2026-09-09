@@ -404,15 +404,15 @@ export const MOCK_NOTIFICATIONS: AppNotification[] = [
 ];
 
 export const MONTHLY = [
-  { mois: "Jan", leads: 34, clients: 4, ca: 180 },
-  { mois: "Fév", leads: 39, clients: 5, ca: 210 },
-  { mois: "Mar", leads: 47, clients: 6, ca: 245 },
-  { mois: "Avr", leads: 42, clients: 6, ca: 232 },
-  { mois: "Mai", leads: 55, clients: 8, ca: 288 },
-  { mois: "Juin", leads: 61, clients: 9, ca: 305 },
-  { mois: "Juil", leads: 58, clients: 7, ca: 264 },
-  { mois: "Août", leads: 74, clients: 12, ca: 356 },
-  { mois: "Sept", leads: 83, clients: 14, ca: 402 },
+  { mois: "Jan", leads: 34, clients: 4, ca: 180, rdv: 11, perdus: 9, ventes: 3 },
+  { mois: "Fév", leads: 39, clients: 5, ca: 210, rdv: 13, perdus: 11, ventes: 4 },
+  { mois: "Mar", leads: 47, clients: 6, ca: 245, rdv: 16, perdus: 12, ventes: 5 },
+  { mois: "Avr", leads: 42, clients: 6, ca: 232, rdv: 15, perdus: 14, ventes: 4 },
+  { mois: "Mai", leads: 55, clients: 8, ca: 288, rdv: 21, perdus: 15, ventes: 6 },
+  { mois: "Juin", leads: 61, clients: 9, ca: 305, rdv: 24, perdus: 17, ventes: 7 },
+  { mois: "Juil", leads: 58, clients: 7, ca: 264, rdv: 22, perdus: 21, ventes: 7 },
+  { mois: "Août", leads: 74, clients: 12, ca: 356, rdv: 31, perdus: 19, ventes: 12 },
+  { mois: "Sept", leads: 83, clients: 14, ca: 402, rdv: 36, perdus: 16, ventes: 14 },
 ];
 
 export const CHANNEL_PERF = [
@@ -573,5 +573,146 @@ export const FAQ = [
   {
     q: "Intervenez-vous en dehors de Témara et Rabat ?",
     a: "Notre cabinet est basé à Harhoura, Témara, et accompagne principalement les projets de la région Rabat-Témara.",
+  },
+];
+
+/* ============ Communication (mock threads par dossier client) ============ */
+
+export type CommMessage = {
+  id: string;
+  channel: "E-mail" | "WhatsApp" | "Appel" | "Note interne";
+  direction: "sortant" | "entrant";
+  subject: string;
+  body: string;
+  date: string;
+  state: "Envoyé" | "Lu" | "Répondu" | "Enregistré";
+};
+
+const thread = (cid: string, name: string, project: string): CommMessage[] => [
+  {
+    id: `${cid}-M1`,
+    channel: "E-mail",
+    direction: "sortant",
+    subject: "Bienvenue chez Lead Advisory Consulting",
+    body: `Bonjour ${name}, merci pour votre confiance. Votre dossier concernant « ${project} » est désormais ouvert.`,
+    date: "20/08/2026 09:14",
+    state: "Lu",
+  },
+  {
+    id: `${cid}-M2`,
+    channel: "WhatsApp",
+    direction: "entrant",
+    subject: "Question sur le calendrier",
+    body: "Bonjour, quand pourrons-nous planifier la prochaine visite ?",
+    date: "23/08/2026 17:42",
+    state: "Répondu",
+  },
+  {
+    id: `${cid}-M3`,
+    channel: "E-mail",
+    direction: "sortant",
+    subject: "Proposition de devis",
+    body: "Veuillez trouver notre proposition d'accompagnement ainsi que le détail des prestations.",
+    date: "26/08/2026 11:05",
+    state: "Envoyé",
+  },
+  {
+    id: `${cid}-M4`,
+    channel: "Appel",
+    direction: "sortant",
+    subject: "Appel de suivi — 6 min",
+    body: "Point d'avancement sur le dossier et réponses aux questions du client.",
+    date: "01/09/2026 15:20",
+    state: "Enregistré",
+  },
+];
+
+export const COMM_THREADS: Record<string, CommMessage[]> = Object.fromEntries(
+  MOCK_CLIENTS.map((c) => [c.id, thread(c.id, c.name, c.project)]),
+);
+
+export const COMM_TEMPLATES = [
+  { id: "T1", label: "Envoi de devis", subject: "Votre devis Lead Advisory Consulting", body: "Bonjour,\n\nVeuillez trouver ci-joint le devis correspondant à votre projet. Nous restons disponibles pour en discuter.\n\nBien cordialement,\nLead Advisory Consulting" },
+  { id: "T2", label: "Relance de paiement", subject: "Rappel — facture en attente", body: "Bonjour,\n\nSauf erreur de notre part, la facture reste en attente de règlement. Nous vous remercions de votre retour.\n\nBien cordialement," },
+  { id: "T3", label: "Confirmation de visite", subject: "Confirmation de votre visite", body: "Bonjour,\n\nNous confirmons votre visite. Un consultant vous accueillera sur place.\n\nBien cordialement," },
+  { id: "T4", label: "Suivi de dossier", subject: "Point d'avancement de votre dossier", body: "Bonjour,\n\nVoici un point d'avancement sur votre dossier.\n\nBien cordialement," },
+];
+
+/* ============ Reporting / KPI ============ */
+
+export const FUNNEL: { etape: LeadStatus; leads: number }[] = [
+  { etape: "Nouveau", leads: 444 },
+  { etape: "Premier contact", leads: 356 },
+  { etape: "Qualification en cours", leads: 241 },
+  { etape: "Qualifié", leads: 158 },
+  { etape: "RDV programmé", leads: 112 },
+  { etape: "Converti", leads: 86 },
+];
+
+export const LOSS_REASONS = [
+  { raison: "Budget insuffisant", count: 38, etape: "Qualification en cours" },
+  { raison: "Zone non couverte", count: 24, etape: "Premier contact" },
+  { raison: "Sans réponse", count: 31, etape: "Premier contact" },
+  { raison: "Projet reporté", count: 19, etape: "Qualifié" },
+  { raison: "Choix d'un concurrent", count: 14, etape: "RDV programmé" },
+];
+
+export const TOP_PROPERTIES = [
+  { nom: "Projet Souissi Prestige", ville: "Rabat", leads: 92, visites: 34, ventes: 11, ca: 620 },
+  { nom: "Villas Harhoura Bay", ville: "Harhoura", leads: 78, visites: 29, ventes: 9, ca: 512 },
+  { nom: "Projet Rabat Océan", ville: "Rabat", leads: 104, visites: 31, ventes: 8, ca: 448 },
+  { nom: "Résidence Témara Centre", ville: "Témara", leads: 66, visites: 22, ventes: 7, ca: 214 },
+  { nom: "Bureaux Agdal Business", ville: "Rabat", leads: 41, visites: 13, ventes: 4, ca: 190 },
+];
+
+export const GEO_PERF = [
+  { zone: "Rabat — Souissi/Agdal", leads: 148, conversion: 24, ca: 742 },
+  { zone: "Harhoura", leads: 121, conversion: 21, ca: 528 },
+  { zone: "Témara", leads: 104, conversion: 17, ca: 336 },
+  { zone: "Salé", leads: 41, conversion: 9, ca: 118 },
+  { zone: "Casablanca", leads: 30, conversion: 13, ca: 118 },
+];
+
+export const OPS_PERF = [
+  { mois: "Mai", reponseMin: 46, relances: 62, rdv: 21 },
+  { mois: "Juin", reponseMin: 38, relances: 74, rdv: 24 },
+  { mois: "Juil", reponseMin: 31, relances: 69, rdv: 22 },
+  { mois: "Août", reponseMin: 22, relances: 88, rdv: 31 },
+  { mois: "Sept", reponseMin: 14, relances: 96, rdv: 36 },
+];
+
+export const FORECAST = [
+  { mois: "Juil", ventes: 7, ca: 264, prevu: null as number | null },
+  { mois: "Août", ventes: 12, ca: 356, prevu: null as number | null },
+  { mois: "Sept", ventes: 14, ca: 402, prevu: 402 },
+  { mois: "Oct", ventes: null as number | null, ca: null as number | null, prevu: 438 },
+  { mois: "Nov", ventes: null as number | null, ca: null as number | null, prevu: 471 },
+  { mois: "Déc", ventes: null as number | null, ca: null as number | null, prevu: 515 },
+];
+
+export const INSIGHTS = [
+  {
+    tone: "success" as const,
+    titre: "Partenariats : meilleur taux de conversion",
+    detail: "31 % de conversion sur 38 leads — le canal le plus rentable du trimestre.",
+    action: "Renforcer les partenariats agences et promoteurs.",
+  },
+  {
+    tone: "warning" as const,
+    titre: "Décrochage à la qualification",
+    detail: "Le passage « Premier contact → Qualification » perd 32 % des leads.",
+    action: "Revoir le script de qualification de l'agent IA.",
+  },
+  {
+    tone: "info" as const,
+    titre: "Temps de réponse en forte baisse",
+    detail: "14 min en moyenne en septembre contre 46 min en mai.",
+    action: "Maintenir la couverture de l'agent IA sur les créneaux du soir.",
+  },
+  {
+    tone: "danger" as const,
+    titre: "Avito sous-performe",
+    detail: "52 leads captés pour seulement 9 % de conversion.",
+    action: "Réduire l'effort Avito au profit d'Instagram et LinkedIn.",
   },
 ];
