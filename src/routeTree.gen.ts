@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as LeadsRouteImport } from './routes/leads'
+import { Route as MarketingRouteImport } from './routes/marketing'
 import { Route as ReportingRouteImport } from './routes/reporting'
 import { Route as ClientsIndexRouteImport } from './routes/clients.index'
 import { Route as ClientsClientIdRouteImport } from './routes/clients.$clientId'
@@ -26,9 +28,19 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeadsRoute = LeadsRouteImport.update({
   id: '/leads',
   path: '/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketingRoute = MarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportingRoute = ReportingRouteImport.update({
@@ -50,7 +62,9 @@ const ClientsClientIdRoute = ClientsClientIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/knowledge': typeof KnowledgeRoute
   '/leads': typeof LeadsRoute
+  '/marketing': typeof MarketingRoute
   '/reporting': typeof ReportingRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -58,7 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/knowledge': typeof KnowledgeRoute
   '/leads': typeof LeadsRoute
+  '/marketing': typeof MarketingRoute
   '/reporting': typeof ReportingRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients': typeof ClientsIndexRoute
@@ -67,7 +83,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
+  '/knowledge': typeof KnowledgeRoute
   '/leads': typeof LeadsRoute
+  '/marketing': typeof MarketingRoute
   '/reporting': typeof ReportingRoute
   '/clients/$clientId': typeof ClientsClientIdRoute
   '/clients/': typeof ClientsIndexRoute
@@ -77,7 +95,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/reporting'
     | '/clients/$clientId'
     | '/clients/'
@@ -85,7 +105,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dashboard'
+    | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/reporting'
     | '/clients/$clientId'
     | '/clients'
@@ -93,7 +115,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/knowledge'
     | '/leads'
+    | '/marketing'
     | '/reporting'
     | '/clients/$clientId'
     | '/clients/'
@@ -102,7 +126,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   LeadsRoute: typeof LeadsRoute
+  MarketingRoute: typeof MarketingRoute
   ReportingRoute: typeof ReportingRoute
   ClientsClientIdRoute: typeof ClientsClientIdRoute
   ClientsIndexRoute: typeof ClientsIndexRoute
@@ -124,11 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leads': {
       id: '/leads'
       path: '/leads'
       fullPath: '/leads'
       preLoaderRoute: typeof LeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketing': {
+      id: '/marketing'
+      path: '/marketing'
+      fullPath: '/marketing'
+      preLoaderRoute: typeof MarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reporting': {
@@ -158,7 +198,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
+  KnowledgeRoute: KnowledgeRoute,
   LeadsRoute: LeadsRoute,
+  MarketingRoute: MarketingRoute,
   ReportingRoute: ReportingRoute,
   ClientsClientIdRoute: ClientsClientIdRoute,
   ClientsIndexRoute: ClientsIndexRoute,
